@@ -1,8 +1,16 @@
 import { useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { useData } from "../providers/DataProvider";
+import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+import Button from '@mui/material/Button';
 
-export const TaskForm = ({}) => {
+import Box from '@mui/material/Box';
+
+export const TaskForm = () => {
   const history = useHistory();
   const { data, setData } = useData();
   const { taskId } = useParams();
@@ -10,6 +18,9 @@ export const TaskForm = ({}) => {
 
   const [text, setText] = useState(task?.name ?? "");
   const [description, setDescription] = useState(task?.description ?? "");
+  const [assignedTo, setAssignedTo] = useState(task?.assignedTo ?? "");
+  const [dueDate, setDueDate] = useState(task?.dueDate ?? "");
+  const [status, setStatus] = useState(task?.status ?? "");
 
   if (!task) {
     return <div>Task not found</div>;
@@ -26,10 +37,25 @@ export const TaskForm = ({}) => {
     setDescription(inputDescription);
   }
 
+  const handleAssignedTo = (e) => {
+    const inputAssignedTo = e.target.value;
+    setAssignedTo(inputAssignedTo);
+  }
+
+  const handleDate = () => {
+    let newDate = new Date();
+    setDueDate(newDate);
+  }
+
+  const handleStatus = (e) => {
+    const inputStatus = e.target.value;
+    setStatus(inputStatus);
+  }
+
   const handleSave = () => {
     const newTasks = data.tasks.map((task) => {
       if (task.id === taskId) {
-        return { ...task, name: text, description: description};
+        return { ...task, name: text, description: description, assignedTo: assignedTo, dueDate: dueDate, status: status};
       }
       return task;
     });
@@ -50,24 +76,34 @@ export const TaskForm = ({}) => {
     setData(() => ({ ...data, tasks: updateCheckbox }));
   }
 
+
+
     
   return (
-    <form>
-      <input
-        type="text"
-        placeholder="Task Name"
-        value={text}
-        onChange={handleChange}
-      />
-      <input type="checkbox" onChange={() => handleCheckList()} checked={task.isCompleted} />
-      
-      <button type="button" onClick={handleSave}>
-        Save
-      </button>
+    <Box sx={{ display: 'block', p: 1, m: 1, bgcolor: '#00A58C', color: 'white'}}>
       <ul>
-        <li>Name: <input type="text" placeholder="Task Name" value={text} onChange={handleChange}/></li>
-        <li>Description: <input type="text" placeholder="Description" value={description} onChange={handleChangeDescription}/></li>
+        <li> <TextField size="small" id="outlined-basic" label="Name" variant="outlined" value={text} onChange={handleChange} style={{paddingBottom:'1%'}}/></li>
+        <li> <TextField size="small" id="outlined-basic" label="Description" variant="outlined" value={description} onChange={handleChangeDescription} style={{paddingBottom:'1%'}}/></li>
+        <li><TextField size="small" id="outlined-basic" label="Assigned To" variant="outlined" value={assignedTo} onChange={handleAssignedTo} style={{paddingBottom:'1%'}}/></li>
+        <li><TextField size="small" id="outlined-basic" label="Date" variant="outlined" value={dueDate} onChange={handleDate} style={{paddingBottom:'1%'}}/></li>
+        <li>
+        <InputLabel id="demo-controlled-open-select-label">Status</InputLabel>        
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={status}
+          label="Status"
+          onChange={handleStatus}
+        >
+          <MenuItem value={'TODO'}>TODO</MenuItem>
+          <MenuItem value={'IN_PROGRESS'}>IN_PROGRESS</MenuItem>
+          <MenuItem value={'REVIEW'}>REVIEW</MenuItem>
+          <MenuItem value={'DONE'}>DONE</MenuItem>
+        </Select>
+        </li>
       </ul>
-    </form>
+      <Checkbox  onChange={() => handleCheckList()} checked={task.isCompleted}/>
+      <Button variant="contained" onClick={handleSave}>Save</Button>
+    </Box>
   );
 };
