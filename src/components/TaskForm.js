@@ -9,6 +9,7 @@ export const TaskForm = ({}) => {
   const task = data.tasks.find((task) => task.id === taskId);
 
   const [text, setText] = useState(task?.name ?? "");
+  const [description, setDescription] = useState(task?.description ?? "");
 
   if (!task) {
     return <div>Task not found</div>;
@@ -20,10 +21,15 @@ export const TaskForm = ({}) => {
     setText(inputName);
   };
 
+  const handleChangeDescription = (e) => {
+    const inputDescription = e.target.value;
+    setDescription(inputDescription);
+  }
+
   const handleSave = () => {
     const newTasks = data.tasks.map((task) => {
       if (task.id === taskId) {
-        return { ...task, name: text };
+        return { ...task, name: text, description: description};
       }
       return task;
     });
@@ -54,9 +60,14 @@ export const TaskForm = ({}) => {
         onChange={handleChange}
       />
       <input type="checkbox" onChange={() => handleCheckList()} checked={task.isCompleted} />
+      
       <button type="button" onClick={handleSave}>
         Save
       </button>
+      <ul>
+        <li>Name: <input type="text" placeholder="Task Name" value={text} onChange={handleChange}/></li>
+        <li>Description: <input type="text" placeholder="Description" value={description} onChange={handleChangeDescription}/></li>
+      </ul>
     </form>
   );
 };
