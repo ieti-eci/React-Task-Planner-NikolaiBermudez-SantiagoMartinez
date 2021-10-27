@@ -31,6 +31,7 @@ export const TaskList = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     newTask(textValue);
+    setTextValue("");
   };
 
   const handleTextChange = (event) => {

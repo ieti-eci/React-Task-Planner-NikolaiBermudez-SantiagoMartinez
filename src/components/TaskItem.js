@@ -8,8 +8,11 @@ export const TaskItem = ({ id, isChecked, taskName, onTaskChange }) => {
   };
 
   const handleClick = () => {
-    const url = `/tasks/${id}`;
-    history.push(url);
+    history.push({
+      pathname: `/tasks/${id}`,
+      state: {isChecked: `${isChecked}`}
+    });
+    
   };
 
   return (
